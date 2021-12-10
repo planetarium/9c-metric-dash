@@ -26,6 +26,20 @@ def serve_layout():
                     html.Div(
                         children=[
                             dcc.Graph(
+                                id="block_append_figure",
+                            ),
+                            dcc.Dropdown(
+                                id="block_append_figure_file",
+                                options=log_file_options,
+                                value=log_file_default,
+                                clearable=False,
+                            ),
+                        ],
+                    ),
+                    html.Hr(),
+                    html.Div(
+                        children=[
+                            dcc.Graph(
                                 id="block_lag_figure",
                             ),
                             dcc.Dropdown(
@@ -65,6 +79,13 @@ app = dash.Dash(
 app.layout = serve_layout
 
 @app.callback(
+    Output("block_append_figure", "figure"),
+    Input("block_append_figure_file", "value"),
+)
+def update_block_append_figure(file: str):
+    return graph.get_block_append_figure(file)
+
+@app.callback(
     Output("block_lag_figure", "figure"),
     Input("block_lag_figure_file", "value"),
 )
@@ -84,4 +105,3 @@ def index():
 
 if __name__ == '__main__':
     app.run_server(debug=True)
-

@@ -3,6 +3,31 @@ import pandas as pd
 import plotly.express as px
 from model import BlockAppend, TransactionStage
 
+def get_block_append_figure(path: str):
+    with open(path, "r") as file:
+        data = file.read()
+    lines = data.strip().split("\n")
+    lines = [line for line in lines if "Block" in line]
+    blocks = [BlockAppend(line) for line in lines]
+    df = pd.DataFrame({
+        "timestamp": [block.timestamp for block in blocks],
+        "appended": [block.appended for block in blocks],
+        "index": [block.index for block in blocks],
+        "hash": [block.hash for block in blocks],
+    })
+    fig = px.scatter(
+        df,
+        x="timestamp",
+        y="appended",
+        labels={
+            "timestamp": "block timestamp",
+            "appended": "appended timestamp",
+        },
+        hover_data=["index", "hash"],
+        title="Block timestamp vs appended timestamp",
+    )
+    return fig
+
 def get_block_lag_figure(path: str):
     with open(path, "r") as file:
         data = file.read()
