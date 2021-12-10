@@ -26,10 +26,52 @@ def serve_layout():
                     html.Div(
                         children=[
                             dcc.Graph(
+                                id="block_append_figure",
+                            ),
+                            dcc.Dropdown(
+                                id="block_append_figure_file",
+                                options=log_file_options,
+                                value=log_file_default,
+                                clearable=False,
+                            ),
+                        ],
+                    ),
+                    html.Hr(),
+                    html.Div(
+                        children=[
+                            dcc.Graph(
                                 id="block_lag_figure",
                             ),
                             dcc.Dropdown(
                                 id="block_lag_figure_file",
+                                options=log_file_options,
+                                value=log_file_default,
+                                clearable=False,
+                            ),
+                        ],
+                    ),
+                    html.Hr(),
+                    html.Div(
+                        children=[
+                            dcc.Graph(
+                                id="block_evaluation_figure",
+                            ),
+                            dcc.Dropdown(
+                                id="block_evaluation_figure_file",
+                                options=log_file_options,
+                                value=log_file_default,
+                                clearable=False,
+                            ),
+                        ],
+                    ),
+                    html.Hr(),
+                    html.Div(
+                        children=[
+                            dcc.Graph(
+                                id="block_states_figure",
+                            ),
+                            dcc.Dropdown(
+                                id="block_states_figure_file",
                                 options=log_file_options,
                                 value=log_file_default,
                                 clearable=False,
@@ -65,11 +107,32 @@ app = dash.Dash(
 app.layout = serve_layout
 
 @app.callback(
+    Output("block_append_figure", "figure"),
+    Input("block_append_figure_file", "value"),
+)
+def update_block_append_figure(file: str):
+    return graph.get_block_append_figure(file)
+
+@app.callback(
     Output("block_lag_figure", "figure"),
     Input("block_lag_figure_file", "value"),
 )
 def update_block_lag_figure(file: str):
     return graph.get_block_lag_figure(file)
+
+@app.callback(
+    Output("block_evaluation_figure", "figure"),
+    Input("block_evaluation_figure_file", "value"),
+)
+def update_block_evaluation_figure(file: str):
+    return graph.get_block_evaluation_figure(file)
+
+@app.callback(
+    Output("block_states_figure", "figure"),
+    Input("block_states_figure_file", "value"),
+)
+def update_block_states_figure(file: str):
+    return graph.get_block_states_figure(file)
 
 @app.callback(
     Output("tx_lag_figure", "figure"),
@@ -84,4 +147,3 @@ def index():
 
 if __name__ == '__main__':
     app.run_server(debug=True)
-
