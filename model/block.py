@@ -3,7 +3,7 @@ import datetime
 
 class Block:
     def __init__(self, line: str):
-        words = line.split(" ")
+        words = line[:-1].split(" ")
         self._index = int(words[3][1:])
         self._hash = words[4]
         self._created = datetime.datetime.fromisoformat(words[-4][:-1])

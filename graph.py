@@ -7,7 +7,6 @@ def get_block_lag_figure(path: str):
     with open(path, "r") as file:
         data = file.read()
     lines = data.strip().split("\n")
-    lines = [line[:-1] for line in lines]
     lines = [line for line in lines if "Block" in line]
     blocks = [Block(line) for line in lines]
     df = pd.DataFrame({
@@ -33,7 +32,6 @@ def get_tx_lag_figure(path: str):
     with open(path, "r") as file:
         data = file.read()
     lines = data.strip().split("\n")
-    lines = [line[:-1] for line in lines]
     lines = [line for line in lines if "Transaction" in line]
     txs = [Transaction(line) for line in lines]
     df = pd.DataFrame({

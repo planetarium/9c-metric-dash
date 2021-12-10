@@ -3,7 +3,7 @@ import datetime
 
 class Transaction:
     def __init__(self, line):
-        words = line.split(" ")
+        words = line[:-1].split(" ")
         self._signer = words[5]
         self._id = words[3]
         self._created = datetime.datetime.fromisoformat(words[-4][:-1])
