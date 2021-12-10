@@ -1,7 +1,7 @@
 from __future__ import annotations
 import pandas as pd
 import plotly.express as px
-from model import BlockAppend, BlockStates, TransactionStage
+from model import BlockAppend, BlockEvaluation, BlockStates, TransactionStage
 
 def get_block_append_figure(path: str):
     with open(path, "r") as file:
@@ -50,6 +50,30 @@ def get_block_lag_figure(path: str):
         },
         hover_data=["index", "hash"],
         title="Block propagation time",
+    )
+    return fig
+
+def get_block_evaluation_figure(path: str):
+    with open(path, "r") as file:
+        data = file.read()
+    lines = data.strip().split("\n")
+    lines = [line for line in lines if "evaluated" in line]
+    blocks = [BlockEvaluation(line) for line in lines]
+    df = pd.DataFrame({
+        "index": [block.index for block in blocks],
+        "hash": [block.hash for block in blocks],
+        "evaluation": [block.evaluation for block in blocks],
+    })
+    fig = px.scatter(
+        df,
+        x="index",
+        y="evaluation",
+        labels={
+            "index": "index",
+            "states": "evaluation time in milliseconds",
+        },
+        hover_data=["hash"],
+        title="Block evaluation time",
     )
     return fig
 

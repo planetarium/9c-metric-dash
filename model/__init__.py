@@ -1,2 +1,2 @@
-from model.block import BlockAppend, BlockStates
+from model.block import BlockAppend, BlockEvaluation, BlockStates
 from model.transaction import TransactionStage

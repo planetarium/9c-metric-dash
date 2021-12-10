@@ -40,10 +40,10 @@ def serve_layout():
                     html.Div(
                         children=[
                             dcc.Graph(
-                                id="block_states_figure",
+                                id="block_lag_figure",
                             ),
                             dcc.Dropdown(
-                                id="block_states_figure_file",
+                                id="block_lag_figure_file",
                                 options=log_file_options,
                                 value=log_file_default,
                                 clearable=False,
@@ -54,10 +54,24 @@ def serve_layout():
                     html.Div(
                         children=[
                             dcc.Graph(
-                                id="block_lag_figure",
+                                id="block_evaluation_figure",
                             ),
                             dcc.Dropdown(
-                                id="block_lag_figure_file",
+                                id="block_evaluation_figure_file",
+                                options=log_file_options,
+                                value=log_file_default,
+                                clearable=False,
+                            ),
+                        ],
+                    ),
+                    html.Hr(),
+                    html.Div(
+                        children=[
+                            dcc.Graph(
+                                id="block_states_figure",
+                            ),
+                            dcc.Dropdown(
+                                id="block_states_figure_file",
                                 options=log_file_options,
                                 value=log_file_default,
                                 clearable=False,
@@ -105,6 +119,13 @@ def update_block_append_figure(file: str):
 )
 def update_block_lag_figure(file: str):
     return graph.get_block_lag_figure(file)
+
+@app.callback(
+    Output("block_evaluation_figure", "figure"),
+    Input("block_evaluation_figure_file", "value"),
+)
+def update_block_evaluation_figure(file: str):
+    return graph.get_block_evaluation_figure(file)
 
 @app.callback(
     Output("block_states_figure", "figure"),
