@@ -1,17 +1,17 @@
 from __future__ import annotations
 import pandas as pd
 import plotly.express as px
-from model import Block, Transaction
+from model import BlockAppend, TransactionStage
 
 def get_block_lag_figure(path: str):
     with open(path, "r") as file:
         data = file.read()
     lines = data.strip().split("\n")
     lines = [line for line in lines if "Block" in line]
-    blocks = [Block(line) for line in lines]
+    blocks = [BlockAppend(line) for line in lines]
     df = pd.DataFrame({
         "appended": [block.appended for block in blocks],
-        "lag": [(block.appended - block.created).total_seconds() for block in blocks],
+        "lag": [(block.appended - block.timestamp).total_seconds() for block in blocks],
         "index": [block.index for block in blocks],
         "hash": [block.hash for block in blocks],
     })
@@ -33,10 +33,10 @@ def get_tx_lag_figure(path: str):
         data = file.read()
     lines = data.strip().split("\n")
     lines = [line for line in lines if "Transaction" in line]
-    txs = [Transaction(line) for line in lines]
+    txs = [TransactionStage(line) for line in lines]
     df = pd.DataFrame({
         "staged": [tx.staged for tx in txs],
-        "lag": [(tx.staged - tx.created).total_seconds() for tx in txs],
+        "lag": [(tx.staged - tx.timestamp).total_seconds() for tx in txs],
         "signer": [tx.signer for tx in txs],
         "id": [tx.id for tx in txs],
     })

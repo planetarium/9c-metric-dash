@@ -1,12 +1,12 @@
 from __future__ import annotations
 import datetime
 
-class Block:
+class BlockAppend:
     def __init__(self, line: str):
         words = line[:-1].split(" ")
         self._index = int(words[3][1:])
         self._hash = words[4]
-        self._created = datetime.datetime.fromisoformat(words[-4][:-1])
+        self._timestamp = datetime.datetime.fromisoformat(words[-4][:-1])
         self._appended = datetime.datetime.fromisoformat(words[-1][:-1])
         return
 
@@ -19,8 +19,8 @@ class Block:
         return self._hash
 
     @property
-    def created(self) -> datetime:
-        return self._created
+    def timestamp(self) -> datetime:
+        return self._timestamp
 
     @property
     def appended(self) -> datetime:
