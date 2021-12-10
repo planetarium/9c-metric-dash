@@ -25,3 +25,23 @@ class BlockAppend:
     @property
     def appended(self) -> datetime:
         return self._appended
+
+class BlockStates:
+    def __init__(self, line: str):
+        words = line[:-1].split(" ")
+        self._index = int(words[-4][1:])
+        self._hash = words[-3]
+        self._states = int(words[-1][:-2])
+        return
+
+    @property
+    def index(self) -> int:
+        return self._index
+
+    @property
+    def hash(self) -> str:
+        return self._hash
+
+    @property
+    def states(self) -> int:
+        return self._states
