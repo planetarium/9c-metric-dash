@@ -63,6 +63,7 @@ def get_block_evaluation_figure(path: str):
         "index": [block.index for block in blocks],
         "hash": [block.hash for block in blocks],
         "evaluation": [block.evaluation for block in blocks],
+        "tx_count": [block.tx_count for block in blocks],
     })
     fig = px.scatter(
         df,
@@ -72,7 +73,7 @@ def get_block_evaluation_figure(path: str):
             "index": "index",
             "states": "evaluation time in milliseconds",
         },
-        hover_data=["hash"],
+        hover_data=["hash", "tx_count"],
         title="Block evaluation time",
     )
     return fig
@@ -87,6 +88,7 @@ def get_block_states_figure(path: str):
         "index": [block.index for block in blocks],
         "hash": [block.hash for block in blocks],
         "states": [block.states for block in blocks],
+        "key_count": [block.key_count for block in blocks],
     })
     fig = px.scatter(
         df,
@@ -96,7 +98,7 @@ def get_block_states_figure(path: str):
             "index": "index",
             "states": "states update time in milliseconds",
         },
-        hover_data=["hash"],
+        hover_data=["hash", "key_count"],
         title="Block states update time",
     )
     return fig
