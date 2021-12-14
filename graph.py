@@ -53,7 +53,7 @@ def get_block_lag_figure(path: str):
     )
     return fig
 
-def get_block_evaluation_figure(path: str):
+def get_block_absolute_evaluation_figure(path: str):
     with open(path, "r") as file:
         data = file.read()
     lines = data.strip().split("\n")
@@ -78,7 +78,7 @@ def get_block_evaluation_figure(path: str):
     )
     return fig
 
-def get_block_states_figure(path: str):
+def get_block_absolute_states_figure(path: str):
     with open(path, "r") as file:
         data = file.read()
     lines = data.strip().split("\n")
