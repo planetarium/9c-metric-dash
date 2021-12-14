@@ -68,10 +68,38 @@ def serve_layout():
                     html.Div(
                         children=[
                             dcc.Graph(
+                                id="block_relative_evaluation_figure",
+                            ),
+                            dcc.Dropdown(
+                                id="block_relative_evaluation_figure_file",
+                                options=log_file_options,
+                                value=log_file_default,
+                                clearable=False,
+                            ),
+                        ],
+                    ),
+                    html.Hr(),
+                    html.Div(
+                        children=[
+                            dcc.Graph(
                                 id="block_absolute_states_figure",
                             ),
                             dcc.Dropdown(
                                 id="block_absolute_states_figure_file",
+                                options=log_file_options,
+                                value=log_file_default,
+                                clearable=False,
+                            ),
+                        ],
+                    ),
+                    html.Hr(),
+                    html.Div(
+                        children=[
+                            dcc.Graph(
+                                id="block_relative_states_figure",
+                            ),
+                            dcc.Dropdown(
+                                id="block_relative_states_figure_file",
                                 options=log_file_options,
                                 value=log_file_default,
                                 clearable=False,
@@ -128,11 +156,25 @@ def update_block_absolute_evaluation_figure(file: str):
     return graph.get_block_absolute_evaluation_figure(file)
 
 @app.callback(
+    Output("block_relative_evaluation_figure", "figure"),
+    Input("block_relative_evaluation_figure_file", "value"),
+)
+def update_block_relative_evaluation_figure(file: str):
+    return graph.get_block_relative_evaluation_figure(file)
+
+@app.callback(
     Output("block_absolute_states_figure", "figure"),
     Input("block_absolute_states_figure_file", "value"),
 )
 def update_block_absolute_states_figure(file: str):
     return graph.get_block_absolute_states_figure(file)
+
+@app.callback(
+    Output("block_relative_states_figure", "figure"),
+    Input("block_relative_states_figure_file", "value"),
+)
+def update_block_relative_states_figure(file: str):
+    return graph.get_block_relative_states_figure(file)
 
 @app.callback(
     Output("tx_lag_figure", "figure"),
