@@ -71,7 +71,7 @@ def get_block_absolute_evaluation_figure(path: str):
         y="evaluation",
         labels={
             "index": "index",
-            "states": "evaluation time in milliseconds",
+            "evaluation": "evaluation time in milliseconds",
         },
         hover_data=["hash", "tx_count"],
         title="Block evaluation time",
@@ -96,7 +96,7 @@ def get_block_relative_evaluation_figure(path: str):
         y="evaluation",
         labels={
             "tx_count": "number of transactions",
-            "states": "evaluation time in milliseconds",
+            "evaluation": "evaluation time in milliseconds",
         },
         hover_data=["hash", "index"],
         title="Block evaluation time",
