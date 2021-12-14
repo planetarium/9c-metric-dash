@@ -32,6 +32,7 @@ class BlockEvaluation:
         self._index = int(words[-5][1:])
         self._hash = words[-4]
         self._evaluation = int(words[-1][:-2])
+        self._tx_count = int(words[-9])
         return
 
     @property
@@ -46,12 +47,17 @@ class BlockEvaluation:
     def evaluation(self) -> int:
         return self._evaluation
 
+    @property
+    def tx_count(self) -> int:
+        return self._tx_count
+
 class BlockStates:
     def __init__(self, line: str):
         words = line[:-1].split(" ")
         self._index = int(words[-4][1:])
         self._hash = words[-3]
         self._states = int(words[-1][:-2])
+        self._key_count = int(words[-10])
         return
 
     @property
@@ -65,3 +71,7 @@ class BlockStates:
     @property
     def states(self) -> int:
         return self._states
+
+    @property
+    def key_count(self) -> int:
+        return self._key_count
