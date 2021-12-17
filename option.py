@@ -11,6 +11,18 @@ def get_log_file_options(logs_directory: str) -> list:
         {"label": os.path.split(file)[-1], "value": file} for file in files
     ]
 
+def get_block_evaluation_duration_options() -> list:
+    return [
+        {"label": "index", "value": "index"},
+        {"label": "tx_count", "value": "tx_count"},
+    ]
+
+def get_block_states_update_duration_options() -> list:
+    return [
+        {"label": "index", "value": "index"},
+        {"label": "key_count", "value": "key_count"},
+    ]
+
 def get_find_hashes_options() -> list:
     return [
         {"label": "chain_id_count", "value": "chain_id_count"},
