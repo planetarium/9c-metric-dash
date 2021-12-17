@@ -1,13 +1,14 @@
 from __future__ import annotations
 import datetime
+import json
 
 class TransactionStage:
     def __init__(self, line):
-        words = line[:-1].split(" ")
-        self._signer = words[5]
-        self._id = words[3]
-        self._timestamp = datetime.datetime.fromisoformat(words[-4][:-1])
-        self._staged = datetime.datetime.fromisoformat(words[-1][:-1])
+        data = json.loads(line)
+        self._signer = data["Signer"]
+        self._id = data["TxId"]
+        self._timestamp = datetime.datetime.fromisoformat(data["TxTimestamp"][:-1])
+        self._staged = datetime.datetime.fromisoformat(data["StagedTimestamp"][:-1])
         return
 
     @property

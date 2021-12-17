@@ -7,7 +7,7 @@ def get_block_append_figure(path: str):
     with open(path, "r") as file:
         data = file.read()
     lines = data.strip().split("\n")
-    lines = [line for line in lines if "Block" in line]
+    lines = [line for line in lines if "appended at" in line]
     blocks = [BlockAppend(line) for line in lines]
     df = pd.DataFrame({
         "index": [block.index for block in blocks],
@@ -32,7 +32,7 @@ def get_block_lag_figure(path: str):
     with open(path, "r") as file:
         data = file.read()
     lines = data.strip().split("\n")
-    lines = [line for line in lines if "Block" in line]
+    lines = [line for line in lines if "appended at" in line]
     blocks = [BlockAppend(line) for line in lines]
     df = pd.DataFrame({
         "appended": [block.appended for block in blocks],
@@ -57,7 +57,7 @@ def get_block_absolute_evaluation_figure(path: str):
     with open(path, "r") as file:
         data = file.read()
     lines = data.strip().split("\n")
-    lines = [line for line in lines if "evaluated" in line]
+    lines = [line for line in lines if "evaluated in" in line]
     blocks = [BlockEvaluation(line) for line in lines]
     df = pd.DataFrame({
         "index": [block.index for block in blocks],
@@ -82,7 +82,7 @@ def get_block_relative_evaluation_figure(path: str):
     with open(path, "r") as file:
         data = file.read()
     lines = data.strip().split("\n")
-    lines = [line for line in lines if "evaluated" in line]
+    lines = [line for line in lines if "evaluated in" in line]
     blocks = [BlockEvaluation(line) for line in lines]
     df = pd.DataFrame({
         "index": [block.index for block in blocks],
@@ -107,7 +107,7 @@ def get_block_absolute_states_figure(path: str):
     with open(path, "r") as file:
         data = file.read()
     lines = data.strip().split("\n")
-    lines = [line for line in lines if "states" in line]
+    lines = [line for line in lines if "updating the states" in line]
     blocks = [BlockStates(line) for line in lines]
     df = pd.DataFrame({
         "index": [block.index for block in blocks],
@@ -132,7 +132,7 @@ def get_block_relative_states_figure(path: str):
     with open(path, "r") as file:
         data = file.read()
     lines = data.strip().split("\n")
-    lines = [line for line in lines if "states" in line]
+    lines = [line for line in lines if "updating the states" in line]
     blocks = [BlockStates(line) for line in lines]
     df = pd.DataFrame({
         "index": [block.index for block in blocks],
@@ -157,7 +157,7 @@ def get_tx_lag_figure(path: str):
     with open(path, "r") as file:
         data = file.read()
     lines = data.strip().split("\n")
-    lines = [line for line in lines if "Transaction" in line]
+    lines = [line for line in lines if "staged at" in line]
     txs = [TransactionStage(line) for line in lines]
     df = pd.DataFrame({
         "signer": [tx.signer for tx in txs],

@@ -1,13 +1,14 @@
 from __future__ import annotations
 import datetime
+import json
 
 class BlockAppend:
     def __init__(self, line: str):
-        words = line[:-1].split(" ")
-        self._index = int(words[3][1:])
-        self._hash = words[4]
-        self._timestamp = datetime.datetime.fromisoformat(words[-4][:-1])
-        self._appended = datetime.datetime.fromisoformat(words[-1][:-1])
+        data = json.loads(line)
+        self._index = data["BlockIndex"]
+        self._hash = data["BlockHash"]
+        self._timestamp = datetime.datetime.fromisoformat(data["BlockTimestamp"][:-1])
+        self._appended = datetime.datetime.fromisoformat(data["AppendTimestamp"][:-1])
         return
 
     @property
@@ -28,11 +29,11 @@ class BlockAppend:
 
 class BlockEvaluation:
     def __init__(self, line: str):
-        words = line[:-1].split(" ")
-        self._index = int(words[-5][1:])
-        self._hash = words[-4]
-        self._evaluation = int(words[-1][:-2])
-        self._tx_count = int(words[-9])
+        data = json.loads(line)
+        self._index = data["BlockIndex"]
+        self._hash = data["BlockHash"]
+        self._evaluation = data["DurationMs"]
+        self._tx_count = data["TxCount"]
         return
 
     @property
@@ -53,11 +54,11 @@ class BlockEvaluation:
 
 class BlockStates:
     def __init__(self, line: str):
-        words = line[:-1].split(" ")
-        self._index = int(words[-4][1:])
-        self._hash = words[-3]
-        self._states = int(words[-1][:-2])
-        self._key_count = int(words[-10])
+        data = json.loads(line)
+        self._index = data["BlockIndex"]
+        self._hash = data["BlockHash"]
+        self._states = data["DurationMs"]
+        self._key_count = data["KeyCount"]
         return
 
     @property

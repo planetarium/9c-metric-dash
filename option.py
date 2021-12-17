@@ -3,7 +3,7 @@ import os
 import glob
 
 def get_log_file_options(logs_directory: str) -> list:
-    files = glob.glob(os.path.join(logs_directory, "metric-*"))
+    files = glob.glob(os.path.join(logs_directory, "metric-*.json"))
     files = sorted(files)
     # strip the last file
     files = files[:-1]
