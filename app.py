@@ -180,7 +180,7 @@ def update_block_relative_states_figure(file: str):
     Output("tx_lag_figure", "figure"),
     Input("tx_lag_figure_file", "value"),
 )
-def update_block_lag_figure(file: str):
+def update_tx_lag_figure(file: str):
     return graph.get_tx_lag_figure(file)
 
 @server.route("/app/")
