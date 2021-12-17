@@ -32,7 +32,7 @@ class BlockEvaluation:
         data = json.loads(line)
         self._index = data["BlockIndex"]
         self._hash = data["BlockHash"]
-        self._evaluation = data["DurationMs"]
+        self._duration = data["DurationMs"]
         self._tx_count = data["TxCount"]
         return
 
@@ -45,8 +45,8 @@ class BlockEvaluation:
         return self._hash
 
     @property
-    def evaluation(self) -> int:
-        return self._evaluation
+    def duration(self) -> float:
+        return self._duration
 
     @property
     def tx_count(self) -> int:
@@ -57,7 +57,7 @@ class BlockStates:
         data = json.loads(line)
         self._index = data["BlockIndex"]
         self._hash = data["BlockHash"]
-        self._states = data["DurationMs"]
+        self._duration = data["DurationMs"]
         self._key_count = data["KeyCount"]
         return
 
@@ -70,8 +70,8 @@ class BlockStates:
         return self._hash
 
     @property
-    def states(self) -> int:
-        return self._states
+    def duration(self) -> float:
+        return self._duration
 
     @property
     def key_count(self) -> int:
