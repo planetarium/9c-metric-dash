@@ -1,7 +1,9 @@
 from __future__ import annotations
 import pandas as pd
 import plotly.express as px
-from model import BlockAppend, BlockEvaluation, BlockStates, TransactionStage
+from model import (
+    BlockAppend, BlockEvaluation, BlockStates, TransactionStage, FindHashes
+)
 
 def get_block_append_figure(path: str):
     with open(path, "r") as file:
@@ -175,5 +177,44 @@ def get_tx_lag_figure(path: str):
         },
         hover_data=["signer", "id"],
         title="Transaction propagation time",
+    )
+    return fig
+
+def get_find_hashes_figure(path: str, option: str):
+    with open(path, "r") as file:
+        data = file.read()
+    options = {
+        "chain_id_count": {
+            "x": "chain_id_count",
+            "label": "number of chain ids",
+            "hover_data": ["hash_count"],
+        },
+        "hash_count": {
+            "x": "hash_count",
+            "label": "number of hashes",
+            "hover_data": ["chain_id_count"]
+        }
+    }
+    _option = options[option]
+
+    lines = data.strip().split("\n")
+    lines = [line for line in lines if "hashes from" in line]
+    data = [FindHashes(line) for line in lines]
+    df = pd.DataFrame({
+        "hash_count": [x.hash_count for x in data],
+        "chain_id_count": [x.chain_id_count for x in data],
+        "duration": [x.duration for x in data],
+    })
+
+    fig = px.scatter(
+        df,
+        x=_option["x"],
+        y="duration",
+        labels={
+            _option["x"]: _option["label"],
+            "duration": "hashes retrieval duration",
+        },
+        hover_data=_option["hover_data"],
+        title="Find hashes duration",
     )
     return fig

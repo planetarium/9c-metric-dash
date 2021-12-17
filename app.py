@@ -16,8 +16,12 @@ import const
 def serve_layout():
     with open(const.path_file, "r") as file:
         log_directory = file.read()
+
     log_file_options = option.get_log_file_options(log_directory)
     log_file_default = log_file_options[0]["value"]
+    find_hashes_options = option.get_find_hashes_options()
+    find_hashes_default = find_hashes_options[0]["value"]
+
     return html.Div(
         dbc.Col(html.Div([
             html.H1(children='Nine Chronicles Metric Log Dash'),
@@ -120,6 +124,26 @@ def serve_layout():
                             ),
                         ],
                     ),
+                    html.Hr(),
+                    html.Div(
+                        children=[
+                            dcc.Graph(
+                                id="find_hashes_figure",
+                            ),
+                            dcc.Dropdown(
+                                id="find_hashes_figure_file",
+                                options=log_file_options,
+                                value=log_file_default,
+                                clearable=False,
+                            ),
+                            dcc.Dropdown(
+                                id="find_hashes_option",
+                                options=find_hashes_options,
+                                value=find_hashes_default,
+                                clearable=False,
+                            ),
+                        ],
+                    ),
                 ],
             ),
         ]), width={"size": 8, "offset": 2}),
@@ -182,6 +206,14 @@ def update_block_relative_states_figure(file: str):
 )
 def update_tx_lag_figure(file: str):
     return graph.get_tx_lag_figure(file)
+
+@app.callback(
+    Output("find_hashes_figure", "figure"),
+    Input("find_hashes_figure_file", "value"),
+    Input("find_hashes_option", "value"),
+)
+def update_find_hashes_figure(file: str, option: str):
+    return graph.get_find_hashes_figure(file, option)
 
 @server.route("/app/")
 def index():
