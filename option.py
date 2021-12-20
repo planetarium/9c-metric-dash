@@ -1,9 +1,13 @@
 from __future__ import annotations
 import os
 import glob
+import const
 
-def get_log_file_options(logs_directory: str) -> list:
-    files = glob.glob(os.path.join(logs_directory, "metric-*.json"))
+def get_log_file_options() -> list:
+    with open(const.path_file, "r") as file:
+        log_directory = file.read()
+
+    files = glob.glob(os.path.join(log_directory, "metric-*.json"))
     files = sorted(files)
     # strip the last file
     files = files[:-1]

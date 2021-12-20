@@ -11,129 +11,19 @@ from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 import graph
 import option
-import const
 
 def serve_layout():
-    with open(const.path_file, "r") as file:
-        log_directory = file.read()
-
-    log_file_options = option.get_log_file_options(log_directory)
-    log_file_default = log_file_options[0]["value"]
-    block_evaluation_duration_options = option.get_block_evaluation_duration_options()
-    block_evaluation_duration_default = block_evaluation_duration_options[0]["value"]
-    block_states_update_duration_options = option.get_block_states_update_duration_options()
-    block_states_update_duration_default = block_states_update_duration_options[0]["value"]
-    find_hashes_options = option.get_find_hashes_options()
-    find_hashes_default = find_hashes_options[0]["value"]
-
     return html.Div(
         dbc.Col(html.Div([
-            html.H1(children='Nine Chronicles Metric Log Dash'),
-            html.Div(
+            html.H1(children='Nine Chronicles Metric Logger Dash'),
+            dcc.Tabs(
+                id="tabs",
+                value="network",
                 children=[
-                    html.Div(
-                        children=[
-                            dcc.Graph(
-                                id="block_append_figure",
-                            ),
-                            dcc.Dropdown(
-                                id="block_append_file",
-                                options=log_file_options,
-                                value=log_file_default,
-                                clearable=False,
-                            ),
-                        ],
-                    ),
-                    html.Hr(),
-                    html.Div(
-                        children=[
-                            dcc.Graph(
-                                id="block_lag_figure",
-                            ),
-                            dcc.Dropdown(
-                                id="block_lag_file",
-                                options=log_file_options,
-                                value=log_file_default,
-                                clearable=False,
-                            ),
-                        ],
-                    ),
-                    html.Hr(),
-                    html.Div(
-                        children=[
-                            dcc.Graph(
-                                id="block_evaluation_duration_figure",
-                            ),
-                            dcc.Dropdown(
-                                id="block_evaluation_duration_file",
-                                options=log_file_options,
-                                value=log_file_default,
-                                clearable=False,
-                            ),
-                            dcc.Dropdown(
-                                id="block_evaluation_duration_option",
-                                options=block_evaluation_duration_options,
-                                value=block_evaluation_duration_default,
-                                clearable=False,
-                            )
-                        ],
-                    ),
-                    html.Hr(),
-                    html.Div(
-                        children=[
-                            dcc.Graph(
-                                id="block_states_update_duration_figure",
-                            ),
-                            dcc.Dropdown(
-                                id="block_states_update_duration_file",
-                                options=log_file_options,
-                                value=log_file_default,
-                                clearable=False,
-                            ),
-                            dcc.Dropdown(
-                                id="block_states_update_duration_option",
-                                options=block_states_update_duration_options,
-                                value=block_states_update_duration_default,
-                                clearable=False,
-                            )
-                        ],
-                    ),
-                    html.Hr(),
-                    html.Div(
-                        children=[
-                            dcc.Graph(
-                                id="tx_lag_figure",
-                            ),
-                            dcc.Dropdown(
-                                id="tx_lag_file",
-                                options=log_file_options,
-                                value=log_file_default,
-                                clearable=False,
-                            ),
-                        ],
-                    ),
-                    html.Hr(),
-                    html.Div(
-                        children=[
-                            dcc.Graph(
-                                id="find_hashes_figure",
-                            ),
-                            dcc.Dropdown(
-                                id="find_hashes_file",
-                                options=log_file_options,
-                                value=log_file_default,
-                                clearable=False,
-                            ),
-                            dcc.Dropdown(
-                                id="find_hashes_option",
-                                options=find_hashes_options,
-                                value=find_hashes_default,
-                                clearable=False,
-                            ),
-                        ],
-                    ),
-                ],
-            ),
+                    dcc.Tab(label="Network", value="network"),
+                    dcc.Tab(label="Performance", value="performance"),
+                ]),
+            html.Div(id="tab_layout"),
         ]), width={"size": 8, "offset": 2}),
     )
 
@@ -145,6 +35,135 @@ app = dash.Dash(
     external_stylesheets=[dbc.themes.BOOTSTRAP],
 )
 app.layout = serve_layout
+
+@app.callback(
+    Output("tab_layout", "children"),
+    Input("tabs", "value"),
+)
+def update_tab_layout(tab: str):
+    log_file_options = option.get_log_file_options()
+    log_file_default = log_file_options[0]["value"]
+    block_evaluation_duration_options = option.get_block_evaluation_duration_options()
+    block_evaluation_duration_default = block_evaluation_duration_options[0]["value"]
+    block_states_update_duration_options = option.get_block_states_update_duration_options()
+    block_states_update_duration_default = block_states_update_duration_options[0]["value"]
+    find_hashes_options = option.get_find_hashes_options()
+    find_hashes_default = find_hashes_options[0]["value"]
+
+    if tab == "network":
+        return html.Div(
+            children=[
+                html.H2("Network"),
+                html.Div(
+                    children=[
+                        dcc.Graph(
+                            id="block_append_figure",
+                        ),
+                        dcc.Dropdown(
+                            id="block_append_file",
+                            options=log_file_options,
+                            value=log_file_default,
+                            clearable=False,
+                        ),
+                    ],
+                ),
+                html.Hr(),
+                html.Div(
+                    children=[
+                        dcc.Graph(
+                            id="block_lag_figure",
+                        ),
+                        dcc.Dropdown(
+                            id="block_lag_file",
+                            options=log_file_options,
+                            value=log_file_default,
+                            clearable=False,
+                        ),
+                    ],
+                ),
+                html.Hr(),
+                html.Div(
+                    children=[
+                        dcc.Graph(
+                            id="tx_lag_figure",
+                        ),
+                        dcc.Dropdown(
+                            id="tx_lag_file",
+                            options=log_file_options,
+                            value=log_file_default,
+                            clearable=False,
+                        ),
+                    ],
+                ),
+            ],
+        )
+    elif tab == "performance":
+        return html.Div(
+            children=[
+                html.H2("Performance"),
+                html.Div(
+                    children=[
+                        dcc.Graph(
+                            id="block_evaluation_duration_figure",
+                        ),
+                        dcc.Dropdown(
+                            id="block_evaluation_duration_file",
+                            options=log_file_options,
+                            value=log_file_default,
+                            clearable=False,
+                        ),
+                        dcc.Dropdown(
+                            id="block_evaluation_duration_option",
+                            options=block_evaluation_duration_options,
+                            value=block_evaluation_duration_default,
+                            clearable=False,
+                        )
+                    ],
+                ),
+                html.Hr(),
+                html.Div(
+                    children=[
+                        dcc.Graph(
+                            id="block_states_update_duration_figure",
+                        ),
+                        dcc.Dropdown(
+                            id="block_states_update_duration_file",
+                            options=log_file_options,
+                            value=log_file_default,
+                            clearable=False,
+                        ),
+                        dcc.Dropdown(
+                            id="block_states_update_duration_option",
+                            options=block_states_update_duration_options,
+                            value=block_states_update_duration_default,
+                            clearable=False,
+                        )
+                    ],
+                ),
+                html.Hr(),
+                html.Div(
+                    children=[
+                        dcc.Graph(
+                            id="find_hashes_figure",
+                        ),
+                        dcc.Dropdown(
+                            id="find_hashes_file",
+                            options=log_file_options,
+                            value=log_file_default,
+                            clearable=False,
+                        ),
+                        dcc.Dropdown(
+                            id="find_hashes_option",
+                            options=find_hashes_options,
+                            value=find_hashes_default,
+                            clearable=False,
+                        ),
+                    ],
+                ),
+            ],
+        )
+    else:
+        raise ValueError("invalid argument")
 
 @app.callback(
     Output("block_append_figure", "figure"),
