@@ -13,16 +13,26 @@ import graph
 import option
 
 def serve_layout():
+    log_dir_options = option.get_log_dir_options()
+    log_dir_default = log_dir_options[0]["value"]
+
     return html.Div(
-        dbc.Col(html.Div([
+        dbc.Col(html.Div(children=[
             html.H1(children='Nine Chronicles Metric Logger Dash'),
+            dcc.Dropdown(
+                id="dir",
+                options=log_dir_options,
+                value=log_dir_default,
+                clearable=False,
+            ),
             dcc.Tabs(
-                id="tabs",
+                id="tab",
                 value="network",
                 children=[
                     dcc.Tab(label="Network", value="network"),
                     dcc.Tab(label="Performance", value="performance"),
-                ]),
+                ]
+            ),
             html.Div(id="tab_layout"),
         ]), width={"size": 8, "offset": 2}),
     )
@@ -38,10 +48,11 @@ app.layout = serve_layout
 
 @app.callback(
     Output("tab_layout", "children"),
-    Input("tabs", "value"),
+    Input("dir", "value"),
+    Input("tab", "value"),
 )
-def update_tab_layout(tab: str):
-    log_file_options = option.get_log_file_options()
+def update_tab_layout(log_dir: str, tab: str):
+    log_file_options = option.get_log_file_options(log_dir)
     log_file_default = log_file_options[0]["value"]
     block_evaluation_duration_options = option.get_block_evaluation_duration_options()
     block_evaluation_duration_default = block_evaluation_duration_options[0]["value"]
