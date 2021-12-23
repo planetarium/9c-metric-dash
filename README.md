@@ -16,13 +16,13 @@ to install the dependencies.
 
 ## Usage
 
-Use the included script `set_path.py` as described below
+Use the included script `set_paths.py` as described below
 
 ```bash
-$ python3 set_path.py -p <path_to_log_directory>
+$ python3 set_paths.py -p <comma_separated_log_directory_paths>
 ```
 
-to save the path to the directory containing the relavent log files.
+to save paths to the directory containing the relavent log files.
 Then run with
 
 ```bash
