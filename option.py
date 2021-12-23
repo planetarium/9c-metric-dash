@@ -4,7 +4,7 @@ import glob
 import const
 
 def get_log_file_options() -> list:
-    with open(const.path_file, "r") as file:
+    with open(const.paths_file, "r") as file:
         log_directory = file.read()
 
     files = glob.glob(os.path.join(log_directory, "metric-*.json"))
