@@ -13,8 +13,6 @@ def get_log_dir_options() -> list:
 def get_log_file_options(log_dir: str) -> list:
     files = glob.glob(os.path.join(log_dir, "metric-*.json"))
     files = sorted(files)
-    # strip the last file
-    files = files[:-1]
     return [
         {"label": os.path.split(file)[-1], "value": file} for file in files
     ]
