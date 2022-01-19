@@ -53,6 +53,22 @@ def get_block_lag_figure(path: str):
         hover_data=["index", "hash"],
         title="Block propagation time",
     )
+    mean = df["lag"].mean()
+    median = df["lag"].median()
+    std = df["lag"].std()
+    text = f"mean: {mean:.2f}<br>median: {median:.2f}<br>std: {std:.2f}"
+    fig.add_annotation(
+        text=text,
+        xref="paper",
+        yref="paper",
+        x=1.0,
+        y=1.0,
+        xanchor="right",
+        yanchor="top",
+        align="right",
+        bordercolor="black",
+        showarrow=False,
+    )
     return fig
 
 def get_block_evaluation_duration_figure(path: str, selection: str):
@@ -92,6 +108,23 @@ def get_block_evaluation_duration_figure(path: str, selection: str):
         hover_data=option["hover_data"],
         title="Block evaluation duration",
     )
+    if selection == "index":
+        mean = df["duration"].mean()
+        median = df["duration"].median()
+        std = df["duration"].std()
+        text = f"mean: {mean:.2f}<br>median: {median:.2f}<br>std: {std:.2f}"
+        fig.add_annotation(
+            text=text,
+            xref="paper",
+            yref="paper",
+            x=1.0,
+            y=1.0,
+            xanchor="right",
+            yanchor="top",
+            align="right",
+            bordercolor="black",
+            showarrow=False,
+        )
     return fig
 
 def get_block_states_update_duration_figure(path: str, selection: str):
@@ -131,31 +164,23 @@ def get_block_states_update_duration_figure(path: str, selection: str):
         hover_data=option["hover_data"],
         title="Block states update duration",
     )
-    return fig
-
-def get_block_relative_states_figure(path: str):
-    with open(path, "r") as file:
-        data = file.read()
-    lines = data.strip().split("\n")
-    lines = [line for line in lines if "updating the states" in line]
-    blocks = [BlockStates(line) for line in lines]
-    df = pd.DataFrame({
-        "index": [block.index for block in blocks],
-        "hash": [block.hash for block in blocks],
-        "duration": [block.duration for block in blocks],
-        "key_count": [block.key_count for block in blocks],
-    })
-    fig = px.scatter(
-        df,
-        x="key_count",
-        y="duration",
-        labels={
-            "key_count": "number of keys",
-            "duration": "states update duration in milliseconds",
-        },
-        hover_data=["hash", "index"],
-        title="Block states update duration",
-    )
+    if selection == "index":
+        mean = df["duration"].mean()
+        median = df["duration"].median()
+        std = df["duration"].std()
+        text = f"mean: {mean:.2f}<br>median: {median:.2f}<br>std: {std:.2f}"
+        fig.add_annotation(
+            text=text,
+            xref="paper",
+            yref="paper",
+            x=1.0,
+            y=1.0,
+            xanchor="right",
+            yanchor="top",
+            align="right",
+            bordercolor="black",
+            showarrow=False,
+        )
     return fig
 
 def get_tx_lag_figure(path: str):
@@ -180,6 +205,22 @@ def get_tx_lag_figure(path: str):
         },
         hover_data=["signer", "id"],
         title="Transaction propagation time",
+    )
+    mean = df["lag"].mean()
+    median = df["lag"].median()
+    std = df["lag"].std()
+    text = f"mean: {mean:.2f}<br>median: {median:.2f}<br>std: {std:.2f}"
+    fig.add_annotation(
+        text=text,
+        xref="paper",
+        yref="paper",
+        x=1.0,
+        y=1.0,
+        xanchor="right",
+        yanchor="top",
+        align="right",
+        bordercolor="black",
+        showarrow=False,
     )
     return fig
 
