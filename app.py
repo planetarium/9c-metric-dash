@@ -60,6 +60,8 @@ def update_tab_layout(log_dir: str, tab: str):
     block_states_update_duration_default = block_states_update_duration_options[0]["value"]
     find_hashes_options = option.get_find_hashes_options()
     find_hashes_default = find_hashes_options[0]["value"]
+    block_render_duration_options = option.get_block_render_duration_options()
+    block_render_duration_default = block_render_duration_options[0]["value"]
 
     if tab == "network":
         return html.Div(
@@ -171,6 +173,26 @@ def update_tab_layout(log_dir: str, tab: str):
                         ),
                     ],
                 ),
+                html.Hr(),
+                html.Div(
+                    children=[
+                        dcc.Graph(
+                            id="block_render_duration_figure",
+                        ),
+                        dcc.Dropdown(
+                            id="block_render_duration_file",
+                            options=log_file_options,
+                            value=log_file_default,
+                            clearable=False,
+                        ),
+                        dcc.Dropdown(
+                            id="block_render_duration_option",
+                            options=block_render_duration_options,
+                            value=block_render_duration_default,
+                            clearable=False,
+                        ),
+                    ],
+                ),
             ],
         )
     else:
@@ -220,6 +242,14 @@ def update_tx_lag_figure(file: str):
 )
 def update_find_hashes_figure(file: str, selection: str):
     return graph.get_find_hashes_figure(file, selection)
+
+@app.callback(
+    Output("block_render_duration_figure", "figure"),
+    Input("block_render_duration_file", "value"),
+    Input("block_render_duration_option", "value"),
+)
+def update_block_render_duration_figure(file: str, selection: str):
+    return graph.get_block_render_duration_figure(file, selection)
 
 @server.route("/app/")
 def index():

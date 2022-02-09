@@ -34,3 +34,9 @@ def get_find_hashes_options() -> list:
         {"label": "chain_id_count", "value": "chain_id_count"},
         {"label": "hash_count", "value": "hash_count"},
     ]
+
+def get_block_render_duration_options() -> list:
+    return [
+        {"label": "index", "value": "index"},
+        {"label": "render_count", "value": "render_count"},
+    ]

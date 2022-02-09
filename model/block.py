@@ -76,3 +76,28 @@ class BlockStates:
     @property
     def key_count(self) -> int:
         return self._key_count
+
+class BlockRender:
+    def __init__(self, line: str):
+        data = json.loads(line)
+        self._index = data["BlockIndex"]
+        self._hash = data["BlockHash"]
+        self._duration = data["DurationMs"]
+        self._render_count = data["RenderCount"]
+        return
+
+    @property
+    def index(self) -> int:
+        return self._index
+
+    @property
+    def hash(self) -> str:
+        return self._hash
+
+    @property
+    def duration(self) -> float:
+        return self._duration
+
+    @property
+    def render_count(self) -> int:
+        return self._render_count
