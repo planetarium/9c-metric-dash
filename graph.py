@@ -2,7 +2,8 @@ from __future__ import annotations
 import pandas as pd
 import plotly.express as px
 from model import (
-    BlockAppend, BlockEvaluation, BlockStates, TransactionStage, FindHashes
+    BlockAppend, BlockEvaluation, BlockStates, BlockRender,
+    TransactionStage, FindHashes
 )
 
 def get_block_append_figure(path: str):
@@ -261,4 +262,60 @@ def get_find_hashes_figure(path: str, selection: str):
         hover_data=option["hover_data"],
         title="Find hashes duration",
     )
+    return fig
+
+def get_block_render_duration_figure(path: str, selection: str):
+    with open(path, "r") as file:
+        data = file.read()
+    options = {
+        "index": {
+            "x": "index",
+            "label": "index",
+            "hover_data": ["hash", "render_count"],
+        },
+        "render_count": {
+            "x": "render_count",
+            "label": "number of renders",
+            "hover_data": ["index", "hash"]
+        }
+    }
+    option = options[selection]
+
+    lines = data.strip().split("\n")
+    lines = [line for line in lines if "Finished rendering" in line]
+    blocks = [BlockRender(line) for line in lines]
+    df = pd.DataFrame({
+        "index": [block.index for block in blocks],
+        "hash": [block.hash for block in blocks],
+        "duration": [block.duration for block in blocks],
+        "render_count": [block.render_count for block in blocks],
+    })
+    fig = px.scatter(
+        df,
+        x=option["x"],
+        y="duration",
+        labels={
+            option["x"]: option["label"],
+            "duration": "render duration in milliseconds",
+        },
+        hover_data=option["hover_data"],
+        title="Block render duration",
+    )
+    if selection == "index":
+        mean = df["duration"].mean()
+        median = df["duration"].median()
+        std = df["duration"].std()
+        text = f"mean: {mean:.2f}<br>median: {median:.2f}<br>std: {std:.2f}"
+        fig.add_annotation(
+            text=text,
+            xref="paper",
+            yref="paper",
+            x=1.0,
+            y=1.0,
+            xanchor="right",
+            yanchor="top",
+            align="right",
+            bordercolor="black",
+            showarrow=False,
+        )
     return fig
