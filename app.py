@@ -272,9 +272,9 @@ def update_find_hashes_figure(file: str, selection: str):
 def update_block_render_duration_figure(file: str, selection: str):
     return graph.get_block_render_duration_figure(file, selection)
 
-@server.route("/app/")
+@server.route("/")
 def index():
     return app.index()
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(host='0.0.0.0', port=80, debug=True)
