@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 from model import (
     BlockAppend, BlockEvaluation, BlockStates, BlockRender,
-    TransactionStage, FindHashes
+    TransactionStage, FindHashes, Sockets,
 )
 
 def get_block_append_figure(path: str):
@@ -222,6 +222,39 @@ def get_tx_lag_figure(path: str):
         align="right",
         bordercolor="black",
         showarrow=False,
+    )
+    return fig
+
+def get_socket_count_figure(path: str):
+    with open(path, "r") as file:
+        data = file.read()
+    lines = data.strip().split("\n")
+    lines = [line for line in lines if "sockets" in line]
+    socket_counts = []
+    for line in lines:
+        if socket_counts:
+            socket_counts.append(Sockets(socket_counts[-1], line))
+        else:
+            socket_counts.append(Sockets(None, line))
+    df = pd.DataFrame({
+        "timestamp": [sockets.timestamp for sockets in socket_counts],
+        "request": [sockets.request for sockets in socket_counts],
+        "broadcast": [sockets.broadcast for sockets in socket_counts],
+        "total": [sockets.total for sockets in socket_counts],
+    })
+    fig = px.area(
+        df,
+        x="timestamp",
+        y=["broadcast", "request"],
+        hover_data=["total"],
+        labels={
+            "timestamp": "log timestamp",
+            "total": "number of total sockets open",
+            "request": "number of request sockets open",
+            "broadcast": "number of broadcast sockets open",
+            "value": "number of sockets open",
+        },
+        title="Number of sockets open",
     )
     return fig
 
