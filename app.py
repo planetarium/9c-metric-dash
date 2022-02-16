@@ -108,6 +108,20 @@ def update_tab_layout(log_dir: str, tab: str):
                         ),
                     ],
                 ),
+                html.Hr(),
+                html.Div(
+                    children=[
+                        dcc.Graph(
+                            id="socket_count_figure",
+                        ),
+                        dcc.Dropdown(
+                            id="socket_count_file",
+                            options=log_file_options,
+                            value=log_file_default,
+                            clearable=False,
+                        ),
+                    ],
+                ),
             ],
         )
     elif tab == "performance":
@@ -234,6 +248,13 @@ def update_block_states_update_duration_figure(file: str, selection: str):
 )
 def update_tx_lag_figure(file: str):
     return graph.get_tx_lag_figure(file)
+
+@app.callback(
+    Output("socket_count_figure", "figure"),
+    Input("socket_count_file", "value"),
+)
+def update_socket_count_figure(file: str):
+    return graph.get_socket_count_figure(file)
 
 @app.callback(
     Output("find_hashes_figure", "figure"),
