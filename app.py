@@ -54,6 +54,8 @@ app.layout = serve_layout
 def update_tab_layout(log_dir: str, tab: str):
     log_file_options = option.get_log_file_options(log_dir)
     log_file_default = log_file_options[0]["value"]
+    request_status_options = option.get_request_status_options()
+    request_status_default = request_status_options[0]["value"]
     block_evaluation_duration_options = option.get_block_evaluation_duration_options()
     block_evaluation_duration_default = block_evaluation_duration_options[0]["value"]
     block_states_update_duration_options = option.get_block_states_update_duration_options()
@@ -118,6 +120,12 @@ def update_tab_layout(log_dir: str, tab: str):
                             id="request_status_file",
                             options=log_file_options,
                             value=log_file_default,
+                            clearable=False,
+                        ),
+                        dcc.Dropdown(
+                            id="request_status_option",
+                            options=request_status_options,
+                            value=request_status_default,
                             clearable=False,
                         ),
                     ],
@@ -266,9 +274,10 @@ def update_tx_lag_figure(file: str):
 @app.callback(
     Output("request_status_figure", "figure"),
     Input("request_status_file", "value"),
+    Input("request_status_option", "value"),
 )
-def update_request_status_figure(file: str):
-    return graph.get_request_status_figure(file)
+def update_request_status_figure(file: str, selection: str):
+    return graph.get_request_status_figure(file, selection)
 
 @app.callback(
     Output("socket_count_figure", "figure"),

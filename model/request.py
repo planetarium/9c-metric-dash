@@ -29,5 +29,9 @@ class Request:
         return self._duration
 
     @property
+    def ratio(self) -> float:
+        return self.duration / self.timeout if self.timeout > 0 else -1
+
+    @property
     def success(self) -> bool:
         return self._success

@@ -225,9 +225,22 @@ def get_tx_lag_figure(path: str):
     )
     return fig
 
-def get_request_status_figure(path: str):
+def get_request_status_figure(path: str, selection: str):
     with open(path, "r") as file:
         data = file.read()
+    options = {
+        "duration": {
+            "y": "duration",
+            "label": "duration",
+            "hover_data": ["message", "duration", "timeout", "success"],
+        },
+        "ratio": {
+            "y": "ratio",
+            "label": "duration / timeout",
+            "hover_data": ["message", "duration", "timeout", "success"],
+        }
+    }
+    option = options[selection]
     lines = data.strip().split("\n")
     lines = [line for line in lines if "with timeout" in line]
     requests = [Request(line) for line in lines]
@@ -237,14 +250,20 @@ def get_request_status_figure(path: str):
         "timeout": [request.timeout for request in requests],
         "duration": [request.duration for request in requests],
         "success": [request.success for request in requests],
+        "ratio": [request.ratio for request in requests],
     })
 
     fig = px.scatter(
         df,
         x="timestamp",
-        y="duration",
-        color="success",
-        hover_data=["message", "timeout", "success"],
+        y=option["y"],
+        color="message",
+        symbol="success",
+        symbol_map= {
+            True: 0,    # o
+            False: 4,   # x
+        },
+        hover_data=option["hover_data"],
         title="Request status",
     )
     return fig
