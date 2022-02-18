@@ -112,6 +112,20 @@ def update_tab_layout(log_dir: str, tab: str):
                 html.Div(
                     children=[
                         dcc.Graph(
+                            id="request_status_figure",
+                        ),
+                        dcc.Dropdown(
+                            id="request_status_file",
+                            options=log_file_options,
+                            value=log_file_default,
+                            clearable=False,
+                        ),
+                    ],
+                ),
+                html.Hr(),
+                html.Div(
+                    children=[
+                        dcc.Graph(
                             id="socket_count_figure",
                         ),
                         dcc.Dropdown(
@@ -248,6 +262,13 @@ def update_block_states_update_duration_figure(file: str, selection: str):
 )
 def update_tx_lag_figure(file: str):
     return graph.get_tx_lag_figure(file)
+
+@app.callback(
+    Output("request_status_figure", "figure"),
+    Input("request_status_file", "value"),
+)
+def update_request_status_figure(file: str):
+    return graph.get_request_status_figure(file)
 
 @app.callback(
     Output("socket_count_figure", "figure"),

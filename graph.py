@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 from model import (
     BlockAppend, BlockEvaluation, BlockStates, BlockRender,
-    TransactionStage, FindHashes, Sockets,
+    TransactionStage, FindHashes, Request, Sockets
 )
 
 def get_block_append_figure(path: str):
@@ -222,6 +222,30 @@ def get_tx_lag_figure(path: str):
         align="right",
         bordercolor="black",
         showarrow=False,
+    )
+    return fig
+
+def get_request_status_figure(path: str):
+    with open(path, "r") as file:
+        data = file.read()
+    lines = data.strip().split("\n")
+    lines = [line for line in lines if "with timeout" in line]
+    requests = [Request(line) for line in lines]
+    df = pd.DataFrame({
+        "message": [request.message for request in requests],
+        "timestamp": [request.timestamp for request in requests],
+        "timeout": [request.timeout for request in requests],
+        "duration": [request.duration for request in requests],
+        "success": [request.success for request in requests],
+    })
+
+    fig = px.scatter(
+        df,
+        x="timestamp",
+        y="duration",
+        color="success",
+        hover_data=["message", "timeout", "success"],
+        title="Request status",
     )
     return fig
 
