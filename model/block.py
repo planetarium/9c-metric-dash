@@ -31,7 +31,7 @@ class BlockEvaluation:
     def __init__(self, line: str):
         data = json.loads(line)
         self._index = data["BlockIndex"]
-        self._hash = data["BlockHash"]
+        self._pre_eval_hash = data["PreEvaluationHash"]
         self._duration = data["DurationMs"]
         self._tx_count = data["TxCount"]
         return
@@ -41,8 +41,8 @@ class BlockEvaluation:
         return self._index
 
     @property
-    def hash(self) -> str:
-        return self._hash
+    def pre_eval_hash(self) -> str:
+        return self._pre_eval_hash
 
     @property
     def duration(self) -> float:

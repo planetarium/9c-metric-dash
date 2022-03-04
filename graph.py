@@ -79,22 +79,22 @@ def get_block_evaluation_duration_figure(path: str, selection: str):
         "index": {
             "x": "index",
             "label": "index",
-            "hover_data": ["hash", "tx_count"],
+            "hover_data": ["pre_eval_hash", "tx_count"],
         },
         "tx_count": {
             "x": "tx_count",
             "label": "number of transactions",
-            "hover_data": ["index", "hash"]
+            "hover_data": ["index", "pre_eval_hash"]
         }
     }
     option = options[selection]
 
     lines = data.strip().split("\n")
-    lines = [line for line in lines if "evaluated in" in line]
+    lines = [line for line in lines if "PreEvaluationHash" in line]
     blocks = [BlockEvaluation(line) for line in lines]
     df = pd.DataFrame({
         "index": [block.index for block in blocks],
-        "hash": [block.hash for block in blocks],
+        "pre_eval_hash": [block.pre_eval_hash for block in blocks],
         "duration": [block.duration for block in blocks],
         "tx_count": [block.tx_count for block in blocks],
     })
@@ -105,6 +105,7 @@ def get_block_evaluation_duration_figure(path: str, selection: str):
         labels={
             option["x"]: option["label"],
             "duration": "evaluation duration in milliseconds",
+            "pre_eval_hash": "pre-evaluation hash"
         },
         hover_data=option["hover_data"],
         title="Block evaluation duration",
