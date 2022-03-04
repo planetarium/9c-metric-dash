@@ -54,10 +54,11 @@ def get_block_lag_figure(path: str):
         hover_data=["index", "hash"],
         title="Block propagation time",
     )
+    count = len(df.index)
     mean = df["lag"].mean()
     median = df["lag"].median()
     std = df["lag"].std()
-    text = f"mean: {mean:.2f}<br>median: {median:.2f}<br>std: {std:.2f}"
+    text = f"count: {count}<br>mean: {mean:.2f}<br>median: {median:.2f}<br>std: {std:.2f}"
     fig.add_annotation(
         text=text,
         xref="paper",
@@ -208,10 +209,11 @@ def get_tx_lag_figure(path: str):
         hover_data=["signer", "id"],
         title="Transaction propagation time",
     )
+    count = len(df.index)
     mean = df["lag"].mean()
     median = df["lag"].median()
     std = df["lag"].std()
-    text = f"mean: {mean:.2f}<br>median: {median:.2f}<br>std: {std:.2f}"
+    text = f"count: {count}<br>mean: {mean:.2f}<br>median: {median:.2f}<br>std: {std:.2f}"
     fig.add_annotation(
         text=text,
         xref="paper",
