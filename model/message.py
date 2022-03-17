@@ -1,7 +1,7 @@
 from __future__ import annotations
 import datetime
 
-class Request:
+class OutboundMessage:
     def __init__(self, data: dict):
         self._message = data["Message"].split(".")[-1]
         self._timestamp = datetime.datetime.fromisoformat(data["@t"][:-2])
