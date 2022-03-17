@@ -1,4 +1,5 @@
 from __future__ import annotations
+import json
 import pandas as pd
 import plotly.express as px
 from model import (
@@ -6,12 +7,25 @@ from model import (
     TransactionStage, FindHashes, Request, Sockets
 )
 
-def get_block_append_figure(path: str):
+def line_to_dict(line: str) -> dict:
+    try:
+        return json.loads(line.strip())
+    except:
+        return {}
+
+def read_file(path: str) -> list[dict]:
     with open(path, "r") as file:
-        data = file.read()
-    lines = data.strip().split("\n")
-    lines = [line for line in lines if "appended at" in line]
-    blocks = [BlockAppend(line) for line in lines]
+        data = [
+            elem for elem in [line_to_dict(line) for line in file.readlines()]
+                if elem and "Subtag" in elem
+        ]
+    return data
+
+def get_block_append_figure(path: str):
+    blocks = [
+        BlockAppend(elem) for elem in read_file(path)
+            if elem["Subtag"] == "BlockAppendTimestamp"
+    ]
     df = pd.DataFrame({
         "index": [block.index for block in blocks],
         "hash": [block.hash for block in blocks],
@@ -32,11 +46,10 @@ def get_block_append_figure(path: str):
     return fig
 
 def get_block_lag_figure(path: str):
-    with open(path, "r") as file:
-        data = file.read()
-    lines = data.strip().split("\n")
-    lines = [line for line in lines if "appended at" in line]
-    blocks = [BlockAppend(line) for line in lines]
+    blocks = [
+        BlockAppend(elem) for elem in read_file(path)
+            if elem["Subtag"] == "BlockAppendTimestamp"
+    ]
     df = pd.DataFrame({
         "appended": [block.appended for block in blocks],
         "lag": [(block.appended - block.timestamp).total_seconds() for block in blocks],
@@ -74,8 +87,10 @@ def get_block_lag_figure(path: str):
     return fig
 
 def get_block_evaluation_duration_figure(path: str, selection: str):
-    with open(path, "r") as file:
-        data = file.read()
+    blocks = [
+        BlockEvaluation(elem) for elem in read_file(path)
+            if elem["Subtag"] == "BlockEvaluationDuration"
+    ]
     options = {
         "index": {
             "x": "index",
@@ -90,9 +105,6 @@ def get_block_evaluation_duration_figure(path: str, selection: str):
     }
     option = options[selection]
 
-    lines = data.strip().split("\n")
-    lines = [line for line in lines if "PreEvaluationHash" in line]
-    blocks = [BlockEvaluation(line) for line in lines]
     df = pd.DataFrame({
         "index": [block.index for block in blocks],
         "pre_eval_hash": [block.pre_eval_hash for block in blocks],
@@ -131,8 +143,10 @@ def get_block_evaluation_duration_figure(path: str, selection: str):
     return fig
 
 def get_block_states_update_duration_figure(path: str, selection: str):
-    with open(path, "r") as file:
-        data = file.read()
+    blocks = [
+        BlockStates(elem) for elem in read_file(path)
+            if elem["Subtag"] == "StateUpdateDuration"
+    ]
     options = {
         "index": {
             "x": "index",
@@ -147,9 +161,6 @@ def get_block_states_update_duration_figure(path: str, selection: str):
     }
     option = options[selection]
 
-    lines = data.strip().split("\n")
-    lines = [line for line in lines if "updating the states" in line]
-    blocks = [BlockStates(line) for line in lines]
     df = pd.DataFrame({
         "index": [block.index for block in blocks],
         "hash": [block.hash for block in blocks],
@@ -187,11 +198,10 @@ def get_block_states_update_duration_figure(path: str, selection: str):
     return fig
 
 def get_tx_lag_figure(path: str):
-    with open(path, "r") as file:
-        data = file.read()
-    lines = data.strip().split("\n")
-    lines = [line for line in lines if "staged at" in line]
-    txs = [TransactionStage(line) for line in lines]
+    txs = [
+        TransactionStage(elem) for elem in read_file(path)
+            if elem["Subtag"] == "TxStageTimestamp"
+    ]
     df = pd.DataFrame({
         "signer": [tx.signer for tx in txs],
         "id": [tx.id for tx in txs],
@@ -229,29 +239,32 @@ def get_tx_lag_figure(path: str):
     return fig
 
 def get_request_status_figure(path: str, selection: str):
-    with open(path, "r") as file:
-        data = file.read()
+    requests = [
+        Request(elem) for elem in read_file(path)
+            if elem["Subtag"] == "OutboundMessageReport"
+    ]
+
     options = {
         "duration": {
             "y": "duration",
-            "label": "duration",
-            "hover_data": ["message", "duration", "timeout", "success"],
+            "label": "duration in milliseconds",
+            "hover_data": ["message", "duration", "timeout", "received", "expected", "success"],
         },
         "ratio": {
             "y": "ratio",
             "label": "duration / timeout",
-            "hover_data": ["message", "duration", "timeout", "success"],
+            "hover_data": ["message", "duration", "timeout", "received", "expected", "success"],
         }
     }
     option = options[selection]
-    lines = data.strip().split("\n")
-    lines = [line for line in lines if "with timeout" in line]
-    requests = [Request(line) for line in lines]
+
     df = pd.DataFrame({
         "message": [request.message for request in requests],
         "timestamp": [request.timestamp for request in requests],
         "timeout": [request.timeout for request in requests],
         "duration": [request.duration for request in requests],
+        "received": [request.received for request in requests],
+        "expected": [request.expected for request in requests],
         "success": [request.success for request in requests],
         "ratio": [request.ratio for request in requests],
     })
@@ -272,41 +285,33 @@ def get_request_status_figure(path: str, selection: str):
     return fig
 
 def get_socket_count_figure(path: str):
-    with open(path, "r") as file:
-        data = file.read()
-    lines = data.strip().split("\n")
-    lines = [line for line in lines if "sockets" in line]
-    socket_counts = []
-    for line in lines:
-        if socket_counts:
-            socket_counts.append(Sockets(socket_counts[-1], line))
-        else:
-            socket_counts.append(Sockets(None, line))
+    socket_counts = [
+        Sockets(elem) for elem in read_file(path)
+            if elem["Subtag"] == "SocketCount"
+    ]
+
     df = pd.DataFrame({
         "timestamp": [sockets.timestamp for sockets in socket_counts],
-        "request": [sockets.request for sockets in socket_counts],
-        "broadcast": [sockets.broadcast for sockets in socket_counts],
-        "total": [sockets.total for sockets in socket_counts],
+        "count": [sockets.count for sockets in socket_counts],
     })
     fig = px.area(
         df,
         x="timestamp",
-        y=["broadcast", "request"],
-        hover_data=["total"],
+        y="count",
         labels={
             "timestamp": "log timestamp",
-            "total": "number of total sockets open",
-            "request": "number of request sockets open",
-            "broadcast": "number of broadcast sockets open",
-            "value": "number of sockets open",
+            "count": "number of sockets open",
         },
         title="Number of sockets open",
     )
     return fig
 
 def get_find_hashes_figure(path: str, selection: str):
-    with open(path, "r") as file:
-        data = file.read()
+    data = [
+        FindHashes(elem) for elem in read_file(path)
+            if elem["Subtag"] == "FindHashesDuration"
+    ]
+
     options = {
         "chain_id_count": {
             "x": "chain_id_count",
@@ -321,9 +326,6 @@ def get_find_hashes_figure(path: str, selection: str):
     }
     option = options[selection]
 
-    lines = data.strip().split("\n")
-    lines = [line for line in lines if "hashes from" in line]
-    data = [FindHashes(line) for line in lines]
     df = pd.DataFrame({
         "hash_count": [x.hash_count for x in data],
         "chain_id_count": [x.chain_id_count for x in data],
@@ -344,8 +346,11 @@ def get_find_hashes_figure(path: str, selection: str):
     return fig
 
 def get_block_render_duration_figure(path: str, selection: str):
-    with open(path, "r") as file:
-        data = file.read()
+    blocks = [
+        BlockRender(elem) for elem in read_file(path)
+            if elem["Subtag"] == "BlockRenderDuration"
+    ]
+
     options = {
         "index": {
             "x": "index",
@@ -360,9 +365,6 @@ def get_block_render_duration_figure(path: str, selection: str):
     }
     option = options[selection]
 
-    lines = data.strip().split("\n")
-    lines = [line for line in lines if "Finished rendering" in line]
-    blocks = [BlockRender(line) for line in lines]
     df = pd.DataFrame({
         "index": [block.index for block in blocks],
         "hash": [block.hash for block in blocks],

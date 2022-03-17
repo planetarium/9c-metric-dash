@@ -1,10 +1,8 @@
 from __future__ import annotations
 import datetime
-import json
 
 class TransactionStage:
-    def __init__(self, line):
-        data = json.loads(line)
+    def __init__(self, data: dict):
         self._signer = data["Signer"]
         self._id = data["TxId"]
         self._timestamp = datetime.datetime.fromisoformat(data["TxTimestamp"][:-1])
