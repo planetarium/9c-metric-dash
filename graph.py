@@ -4,8 +4,9 @@ import pandas as pd
 import plotly.express as px
 from model import (
     BlockAppend, BlockEvaluation, BlockStates, BlockRender,
-    TransactionStage, FindHashes, OutboundMessage, Sockets
+    TransactionStage, FindHashes, OutboundMessage, InboundMessage, Sockets
 )
+from model.message import InboundMessage
 
 def line_to_dict(line: str) -> dict:
     try:
@@ -280,7 +281,26 @@ def get_outbound_message_report_figure(path: str, selection: str):
             False: 4,   # x
         },
         hover_data=option["hover_data"],
-        title="Outbound message",
+        title="Outbound message report",
+    )
+    return fig
+
+def get_inbound_message_report_figure(path: str):
+    messages = [
+        InboundMessage(elem) for elem in read_file(path)
+            if elem["Subtag"] == "InboundMessageReport"
+    ]
+    df = pd.DataFrame({
+        "message": [message.message for message in messages],
+        "timestamp": [message.timestamp for message in messages],
+    })
+
+    fig = px.strip(
+        df,
+        x="timestamp",
+        y="message",
+        color="message",
+        title="Inbound message report",
     )
     return fig
 

@@ -134,6 +134,20 @@ def update_tab_layout(log_dir: str, tab: str):
                 html.Div(
                     children=[
                         dcc.Graph(
+                            id="inbound_message_report_figure",
+                        ),
+                        dcc.Dropdown(
+                            id="inbound_message_report_file",
+                            options=log_file_options,
+                            value=log_file_default,
+                            clearable=False,
+                        ),
+                    ],
+                ),
+                html.Hr(),
+                html.Div(
+                    children=[
+                        dcc.Graph(
                             id="socket_count_figure",
                         ),
                         dcc.Dropdown(
@@ -278,6 +292,13 @@ def update_tx_lag_figure(file: str):
 )
 def update_outbound_message_report_figure(file: str, selection: str):
     return graph.get_outbound_message_report_figure(file, selection)
+
+@app.callback(
+    Output("inbound_message_report_figure", "figure"),
+    Input("inbound_message_report_file", "value"),
+)
+def update_inbound_message_report_figure(file: str):
+    return graph.get_inbound_message_report_figure(file)
 
 @app.callback(
     Output("socket_count_figure", "figure"),
