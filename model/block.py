@@ -1,10 +1,8 @@
 from __future__ import annotations
 import datetime
-import json
 
 class BlockAppend:
-    def __init__(self, line: str):
-        data = json.loads(line)
+    def __init__(self, data: dict):
         self._index = data["BlockIndex"]
         self._hash = data["BlockHash"]
         self._timestamp = datetime.datetime.fromisoformat(data["BlockTimestamp"][:-1])
@@ -28,8 +26,7 @@ class BlockAppend:
         return self._appended
 
 class BlockEvaluation:
-    def __init__(self, line: str):
-        data = json.loads(line)
+    def __init__(self, data: dict):
         self._index = data["BlockIndex"]
         self._pre_eval_hash = data["PreEvaluationHash"]
         self._duration = data["DurationMs"]
@@ -53,8 +50,7 @@ class BlockEvaluation:
         return self._tx_count
 
 class BlockStates:
-    def __init__(self, line: str):
-        data = json.loads(line)
+    def __init__(self, data: dict):
         self._index = data["BlockIndex"]
         self._hash = data["BlockHash"]
         self._duration = data["DurationMs"]
@@ -78,8 +74,7 @@ class BlockStates:
         return self._key_count
 
 class BlockRender:
-    def __init__(self, line: str):
-        data = json.loads(line)
+    def __init__(self, data: dict):
         self._index = data["BlockIndex"]
         self._hash = data["BlockHash"]
         self._duration = data["DurationMs"]

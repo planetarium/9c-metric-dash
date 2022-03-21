@@ -1,9 +1,7 @@
 from __future__ import annotations
-import json
 
 class FindHashes:
-    def __init__(self, line: str):
-        data = json.loads(line)
+    def __init__(self, data: dict):
         self._hash_count = data["HashCount"]
         self._chain_id_count = data["ChainIdCount"]
         self._duration = data["DurationMs"]

@@ -54,8 +54,8 @@ app.layout = serve_layout
 def update_tab_layout(log_dir: str, tab: str):
     log_file_options = option.get_log_file_options(log_dir)
     log_file_default = log_file_options[0]["value"]
-    request_status_options = option.get_request_status_options()
-    request_status_default = request_status_options[0]["value"]
+    outbound_message_report_options = option.get_outbound_message_report_options()
+    outbound_message_report_default = outbound_message_report_options[0]["value"]
     block_evaluation_duration_options = option.get_block_evaluation_duration_options()
     block_evaluation_duration_default = block_evaluation_duration_options[0]["value"]
     block_states_update_duration_options = option.get_block_states_update_duration_options()
@@ -114,18 +114,32 @@ def update_tab_layout(log_dir: str, tab: str):
                 html.Div(
                     children=[
                         dcc.Graph(
-                            id="request_status_figure",
+                            id="outbound_message_report_figure",
                         ),
                         dcc.Dropdown(
-                            id="request_status_file",
+                            id="outbound_message_report_file",
                             options=log_file_options,
                             value=log_file_default,
                             clearable=False,
                         ),
                         dcc.Dropdown(
-                            id="request_status_option",
-                            options=request_status_options,
-                            value=request_status_default,
+                            id="outbound_message_report_option",
+                            options=outbound_message_report_options,
+                            value=outbound_message_report_default,
+                            clearable=False,
+                        ),
+                    ],
+                ),
+                html.Hr(),
+                html.Div(
+                    children=[
+                        dcc.Graph(
+                            id="inbound_message_report_figure",
+                        ),
+                        dcc.Dropdown(
+                            id="inbound_message_report_file",
+                            options=log_file_options,
+                            value=log_file_default,
                             clearable=False,
                         ),
                     ],
@@ -272,12 +286,19 @@ def update_tx_lag_figure(file: str):
     return graph.get_tx_lag_figure(file)
 
 @app.callback(
-    Output("request_status_figure", "figure"),
-    Input("request_status_file", "value"),
-    Input("request_status_option", "value"),
+    Output("outbound_message_report_figure", "figure"),
+    Input("outbound_message_report_file", "value"),
+    Input("outbound_message_report_option", "value"),
 )
-def update_request_status_figure(file: str, selection: str):
-    return graph.get_request_status_figure(file, selection)
+def update_outbound_message_report_figure(file: str, selection: str):
+    return graph.get_outbound_message_report_figure(file, selection)
+
+@app.callback(
+    Output("inbound_message_report_figure", "figure"),
+    Input("inbound_message_report_file", "value"),
+)
+def update_inbound_message_report_figure(file: str):
+    return graph.get_inbound_message_report_figure(file)
 
 @app.callback(
     Output("socket_count_figure", "figure"),
