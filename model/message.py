@@ -1,7 +1,7 @@
 from __future__ import annotations
 import datetime
 
-class Request:
+class OutboundMessage:
     def __init__(self, data: dict):
         self._message = data["Message"].split(".")[-1]
         self._timestamp = datetime.datetime.fromisoformat(data["@t"][:-2])
@@ -42,3 +42,17 @@ class Request:
     @property
     def success(self) -> bool:
         return self.received == self.expected
+
+class InboundMessage:
+    def __init__(self, data: dict):
+        self._message = data["Message"].split(".")[-1]
+        self._timestamp = datetime.datetime.fromisoformat(data["@t"][:-2])
+        return
+
+    @property
+    def message(self) -> str:
+        return self._message
+
+    @property
+    def timestamp(self) -> int:
+        return self._timestamp

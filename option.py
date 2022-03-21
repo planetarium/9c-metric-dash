@@ -17,7 +17,7 @@ def get_log_file_options(log_dir: str) -> list:
         {"label": os.path.split(file)[-1], "value": file} for file in files
     ]
 
-def get_request_status_options() -> list:
+def get_outbound_message_report_options() -> list:
     return [
         {"label": "duration", "value": "duration"},
         {"label": "ratio", "value": "ratio"},

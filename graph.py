@@ -1,11 +1,15 @@
 from __future__ import annotations
 import json
 import pandas as pd
-import plotly.express as px
+import plotly
+from plotly import express as px
+from plotly import graph_objects as go
+from plotly import subplots
 from model import (
     BlockAppend, BlockEvaluation, BlockStates, BlockRender,
-    TransactionStage, FindHashes, Request, Sockets
+    TransactionStage, FindHashes, OutboundMessage, InboundMessage, Sockets
 )
+from model.message import InboundMessage
 
 def line_to_dict(line: str) -> dict:
     try:
@@ -238,9 +242,9 @@ def get_tx_lag_figure(path: str):
     )
     return fig
 
-def get_request_status_figure(path: str, selection: str):
-    requests = [
-        Request(elem) for elem in read_file(path)
+def get_outbound_message_report_figure(path: str, selection: str):
+    messages = [
+        OutboundMessage(elem) for elem in read_file(path)
             if elem["Subtag"] == "OutboundMessageReport"
     ]
 
@@ -259,14 +263,14 @@ def get_request_status_figure(path: str, selection: str):
     option = options[selection]
 
     df = pd.DataFrame({
-        "message": [request.message for request in requests],
-        "timestamp": [request.timestamp for request in requests],
-        "timeout": [request.timeout for request in requests],
-        "duration": [request.duration for request in requests],
-        "received": [request.received for request in requests],
-        "expected": [request.expected for request in requests],
-        "success": [request.success for request in requests],
-        "ratio": [request.ratio for request in requests],
+        "message": [message.message for message in messages],
+        "timestamp": [message.timestamp for message in messages],
+        "timeout": [message.timeout for message in messages],
+        "duration": [message.duration for message in messages],
+        "received": [message.received for message in messages],
+        "expected": [message.expected for message in messages],
+        "success": [message.success for message in messages],
+        "ratio": [message.ratio for message in messages],
     })
 
     fig = px.scatter(
@@ -280,8 +284,47 @@ def get_request_status_figure(path: str, selection: str):
             False: 4,   # x
         },
         hover_data=option["hover_data"],
-        title="Request status",
+        title="Outbound message report",
     )
+    return fig
+
+def get_inbound_message_report_figure(path: str):
+    messages = [
+        InboundMessage(elem) for elem in read_file(path)
+            if elem["Subtag"] == "InboundMessageReport"
+    ]
+    df = pd.DataFrame({
+        "message": [message.message for message in messages],
+        "timestamp": [message.timestamp for message in messages],
+    })
+
+    message_types = df["message"].unique()
+    df = pd.DataFrame({
+        message_type: (
+            df.loc[df["message"] == message_type]
+                .resample("1T", on="timestamp")
+                .count()
+                .fillna(0)
+        )["message"]
+            for message_type in message_types
+    }).fillna(0).reset_index()
+
+    fig = go.Figure()
+    for message_type, row in zip(message_types, range(len(message_types))):
+        fig.add_trace(go.Scatter(
+                x=df["timestamp"],
+                y=df[message_type],
+                mode="lines",
+                name=message_type,
+                hovertemplate="timestamp: %{x}<br>count: %{y}",
+        ))
+    fig.update_layout(
+        title="Inbound message report",
+        xaxis_title="timestamp",
+        yaxis_title="count per minute",
+        yaxis_rangemode="tozero",
+    )
+
     return fig
 
 def get_socket_count_figure(path: str):
