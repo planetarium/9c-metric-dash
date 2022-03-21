@@ -1,7 +1,10 @@
 from __future__ import annotations
 import json
 import pandas as pd
-import plotly.express as px
+import plotly
+from plotly import express as px
+from plotly import graph_objects as go
+from plotly import subplots
 from model import (
     BlockAppend, BlockEvaluation, BlockStates, BlockRender,
     TransactionStage, FindHashes, OutboundMessage, InboundMessage, Sockets
@@ -295,13 +298,33 @@ def get_inbound_message_report_figure(path: str):
         "timestamp": [message.timestamp for message in messages],
     })
 
-    fig = px.strip(
-        df,
-        x="timestamp",
-        y="message",
-        color="message",
+    message_types = df["message"].unique()
+    df = pd.DataFrame({
+        message_type: (
+            df.loc[df["message"] == message_type]
+                .resample("1T", on="timestamp")
+                .count()
+                .fillna(0)
+        )["message"]
+            for message_type in message_types
+    }).fillna(0).reset_index()
+
+    fig = go.Figure()
+    for message_type, row in zip(message_types, range(len(message_types))):
+        fig.add_trace(go.Scatter(
+                x=df["timestamp"],
+                y=df[message_type],
+                mode="lines",
+                name=message_type,
+                hovertemplate="timestamp: %{x}<br>count: %{y}",
+        ))
+    fig.update_layout(
         title="Inbound message report",
+        xaxis_title="timestamp",
+        yaxis_title="count per minute",
+        yaxis_rangemode="tozero",
     )
+
     return fig
 
 def get_socket_count_figure(path: str):
